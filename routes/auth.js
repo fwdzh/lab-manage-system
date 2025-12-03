@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../dataBase/db');
 const bcrypt = require('bcrypt');
-// 注册
+
 router.post('/register', async (req, res) => {
 	const { username, password, email } = req.body;
 	if(!username || !password || !email)
@@ -34,7 +34,6 @@ router.post('/register', async (req, res) => {
 	}
 });
 
-// 登录
 router.post('/login', async (req, res) => {
 	const { username, password } = req.body;
 	if(!username || !password)
