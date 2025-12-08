@@ -25,7 +25,7 @@
             if(res.status === 200){
                 ElMessage.success("登录成功！")
                 console.log(res.data.token)
-                localStorage.setItem('token', res.token)
+                localStorage.setItem('token', res.data.token)
                 router.push('/home')
             }else{
                 ElMessage.error("登录失败！")
@@ -58,11 +58,11 @@
             show-password
         />
         <div style="font-size: 14px;">
-            <a href="#">去注册</a>
+            <router-link to="/register">去注册</router-link>
             &nbsp;
             <a href="#">忘记密码</a>
         </div>
-        <el-button type="primary" @click=login style="width: 100%;">
+        <el-button type="primary" @click="login" style="width: 100%;">
             登录
         </el-button>
     </div>
