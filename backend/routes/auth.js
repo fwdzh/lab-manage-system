@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../dataBase/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const SECRET = 'cd9e4b20ae3fba71d2e3c0bd95a81b6f49ae03c7cd9eb2a3bf6f2f4271e493ac'
 
 router.post('/register', async (req, res) => {
 	const { username, password, email } = req.body;
@@ -53,8 +55,19 @@ router.post('/login', async (req, res) => {
 			return res.status(400).json({
 				message : "密码错误！"
 			})
+		const token = jwt.sign(
+			{ id : user.id, username: user.username },
+			SECRET,
+			{ expiresIn : '7d' }
+		)
 		res.json({
-			message : "登录成功"
+			message : "登录成功",
+			token,
+			user : {
+				id : user.id,
+				usename : user.username,
+				email : user.email
+			}
 		})
 	} catch (e) {
 		console.log(e);
