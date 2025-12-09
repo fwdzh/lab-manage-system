@@ -4,92 +4,93 @@ const db = require('../dataBase/db');
 const bcrypt = require('bcrypt')
 const router = express.Router();
 
-router.get('/add', async(req, res) => {
+router.post('/add', async (req, res) => {
     const { username, password, email } = req.body;
-        if(!username || !password || !email)
+    if (!username || !password || !email)
+        return res.status(400).json({
+            message: '用户名、邮箱和密码不能为空！'
+        });
+    try {
+        const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        // 不要用格式化字符串
+
+        if (rows.length)
             return res.status(400).json({
-                message : '用户名、邮箱和密码不能为空！'
+                message: '用户名已存在'
             });
-        try {
-            const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-            // 不要用格式化字符串
-    
-            if(rows.length)
-                return res.status(400).json({
-                    message : '用户名已存在'
-                });
-            
-            const saltRounds = 10
-            const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
-            await db.query('INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
-                                            [username, hashedPassword, email]);
-            res.json({
-                message : '添加成功!'
-            });
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({
-                message : '服务器错误'
-            });
-        }
+
+        const saltRounds = 10
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        await db.query('INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+            [username, hashedPassword, email]);
+        res.json({
+            message: '添加成功!'
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            message: '服务器错误'
+        });
+    }
 }); // 这里要做的事情，其实和注册是完全相同的，先暂时直接贴过来吧～
 
-router.delete('/delete', async(req, res) => {
+router.delete('/delete', async (req, res) => {
     const { id } = req.body;
     let delCount = 0;
     try {
-        for(const userId of id) {
-            const [result] = await db.query('DELETE FROM users WHERE id = ?', [userId]);
-            if(result.affectedRows > 0) delCount++;
-        }
+        // for(const userId of id) {
+        //     const [result] = await db.query('DELETE FROM users WHERE id = ?', [userId]);
+        //     if(result.affectedRows > 0) delCount++;
+        // }
+        await db.query('DELETE FROM users WHERE id IN (?)', [id])
         res.json({
-            message : `成功删除 ${delCount} 个用户`
+            message: "成功删除！"
         });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).json({
-            message : "删除失败"
+            message: "删除失败"
         });
     }
 });
 
-router.patch('/update/:id', async(req, res) => {
+router.patch('/update/:id', async (req, res) => {
     const { username, email, password } = req.body;
     const userId = req.params.id;
     try {
-        if(username)
+        if ('username' in req.body)
             return res.status(400).json({
-                message : "修改用户名是不可以的"
+                message: "不可以修改用户名"
             })
-        if(!email && !password)
+        if (!email && !password)
             return res.status(400).json({
-                message : "没有需要修改的内容"
+                message: "没有需要修改的内容"
             })
-        if(email)
+        if (email)
             await db.query('UPDATE users SET email = ? WHERE id = ?', [email, userId]);
-        if(password) {
+        if (password) {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             await db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
         }
         res.json({
-            message : "修改成功"
+            message: "修改成功"
         })
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(400).json({
-            message : "修改失败"
+            message: "修改失败"
         })
     }
 });
 
-router.get('/all', async(req, res) => {
+router.get('/all', async (req, res) => {
     try {
         const [result] = await db.query('SELECT username, email, create_time FROM users');
         console.log(result);
         res.json({
-            userList : result
+            userList: result
         })
     } catch (e) {
         res.status(500).json({
