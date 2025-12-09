@@ -55,7 +55,25 @@ npm start
 | 方法   | 路径                 | 请求体                                           | 描述                                             |
 | ------ | -------------------- | ------------------------------------------------ | ------------------------------------------------ |
 | GET    | /api/user/all        | `{ }`                                            | 获取所有用户列表                                 |
-| GET    | /api/user/add        | `{username, password, email}`                    | 添加用户（请求体包含 username, password, email） |
+| POST   | /api/user/add        | `{username, password, email}`                    | 添加用户（请求体包含 username, password, email） |
 | PATCH  | /api/user/update/:id | `{ email, password }` 可仅传入 email 或 password | 修改用户信息（只能修改邮箱和密码）               |
 | DELETE | /api/user/delete     | `{ id }` 一个 id 数组，可支持删多个用户          | 删除用户（请求体包含 id 数组）                   |
+
+### 实验室管理(./routes/lab.js)
+
+| 方法   | 路径                   | 请求体                                                    | 描述           |
+| ------ | ---------------------- | --------------------------------------------------------- | -------------- |
+| GET    | /api/device/all        | `{ }`                                                     | 获取实验室列表 |
+| POST   | /api/device/add        | `{ name, leader, phone, email, des }` 除 name，都可以省略 | 添加实验室     |
+| PATCH  | /api/device/update/:id | `{ name, leader, phone, email, des }` 可选部分参数        | 更新实验室信息 |
+| DELETE | /api/device/delete/:id | `{ }`                                                     | 删除实验室     |
+
+### 设备管理(./routes/device.js)
+
+| 方法   | 路径                   | 请求体                                                       | 描述         |
+| ------ | ---------------------- | ------------------------------------------------------------ | ------------ |
+| GET    | /api/device/all        | `{ }`                                                        | 获取设备列表 |
+| POST   | /api/device/add        | `{ name, model, lab_id, status, location, purchase_time, price, description }` name 为必填 | 添加设备     |
+| PATCH  | /api/device/update/:id | `{ name, model, lab_id, status, location, purchase_time, price, description }` 选部分 | 修改设备信息 |
+| DELETE | /api/device/delete/:id | `{ }`                                                        | 删除设备     |
 
