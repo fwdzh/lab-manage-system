@@ -16,6 +16,8 @@
         /*
         res.status : 返回的状态码，200 表示请求成功
         res.data.token : token
+        失败
+        e.response.data.message
         */
         try {
             const res = await axios.post(`${prefix}/api/auth/login`, {
