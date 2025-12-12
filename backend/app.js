@@ -9,6 +9,7 @@ const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const labRouter = require('./routes/lab')
 const deviceRouter = require('./routes/device')
+const labReserveRouter = require('./routes/lab_reserve')
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/lab', labRouter);
 app.use('/api/device', deviceRouter);
+app.use('/api/lab_reservation/', labReserveRouter);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

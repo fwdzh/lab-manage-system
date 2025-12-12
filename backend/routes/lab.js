@@ -9,19 +9,20 @@ const router = express.Router()
 获取列表
 */
 router.post('/add', async(req, res) => {
-    const { name, leader, phone, email, des } = req.body
+    const { name, leader, phone, email, des, location } = req.body
     if(!name)
         return res.status(400).json({ message : "实验室名称不能为空！" })
     try {
         const [rows] = await db.query('SELECT * FROM labs WHERE name = ?', [name])
         if(rows.length)
             return res.status(400).json({ message : "实验室名称重复！" })
-        await db.query('INSERT INTO labs (name, leader, phone, email, description) VALUES (?, ?, ?, ?, ?)',[
+        await db.query('INSERT INTO labs (name, leader, phone, email, description, location) VALUES (?, ?, ?, ?, ?)',[
             name,
             leader ?? null,
             phone ?? null,
             email ?? null,
-            des ?? null
+            des ?? null,
+            location ?? null
         ])
         res.json({ message : "添加成功！" })
     } catch(e) {
@@ -31,10 +32,10 @@ router.post('/add', async(req, res) => {
 })
 
 router.patch('/update/:id', async (req, res) => {
-    const { name, leader, phone, email, des } = req.body
+    const { name, leader, phone, email, des, location } = req.body
     const labId = req.params.id;
     try {
-        if(!name && !leader && !phone && !email && !des)
+        if(!name && !leader && !phone && !email && !des && !location)
             return res.status(400).json({ message : "没有需要修改的内容" })
         if(name){
             const [rows] = await db.query('SELECT * FROM labs WHERE name = ?', [name])
@@ -53,6 +54,9 @@ router.patch('/update/:id', async (req, res) => {
         }
         if(des){
             await db.query("UPDATE labs SET description = ? WHERE id = ?", [des, labId])
+        }
+        if(location){
+            await db.query("UPDATE labs SET location = ? WHERE id = ?", [location, labId])
         }
         res.json({ message : "修改成功" })
     } catch(e) {
