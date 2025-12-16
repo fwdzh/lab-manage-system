@@ -1,13 +1,12 @@
 <!-- /src/components/Login.vue -->
 <script setup>
-    import { ref, useTransitionState } from 'vue';
+    import { ref } from 'vue';
     import axios from 'axios';
     import { ElMessage } from 'element-plus';
     import { useRouter } from 'vue-router';
 
     const username = ref('')
     const password = ref('')
-    const input = ref('')
     const prefix = 'http://localhost:3000'
     const router = useRouter()
 
@@ -28,7 +27,7 @@
                 ElMessage.success("登录成功！")
                 console.log(res.data.token)
                 localStorage.setItem('token', res.data.token)
-                router.push('/home')
+                router.push('/')
             }else{
                 ElMessage.error("登录失败！")
             }

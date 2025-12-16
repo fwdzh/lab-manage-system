@@ -87,7 +87,7 @@ router.patch('/update/:id', async (req, res) => {
 
 router.get('/all', async (req, res) => {
     try {
-        const [result] = await db.query('SELECT username, email, create_time FROM users');
+        const [result] = await db.query('SELECT id, username, email, create_time FROM users');
         console.log(result);
         res.json({
             userList: result

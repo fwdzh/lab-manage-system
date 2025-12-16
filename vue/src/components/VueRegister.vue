@@ -72,7 +72,7 @@
             ElMessageBox.alert(e.response.data.message, '错误', {
                 confirmButtonText: '我知道了'
             })
-            
+
             console.log("error : ", e.response.data.message)
         }
     }

@@ -1,0 +1,33 @@
+import { createRouter, createWebHistory } from 'vue-router'
+
+import Login from '@/components/VueLogin.vue'
+import Register from '@/components/VueRegister.vue'
+import Home from '@/views/HomePage.vue'
+import VueUser from '@/components/VueUser.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    { path: '/login', component: Login },
+    { path: '/register', component: Register},
+    { path: '/', component: Home,
+      children : [
+        {path: 'user', component: VueUser, name : 'user'}
+      ]
+    },
+    // { path: '/user', component: VueUser, name: 'user' },
+    { path: '/', redirect: '/home' }
+  ],
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+
+  if(token || to.path === '/login' || to.path === '/register'){
+    console.log(token, typeof token)
+    next()
+  }else{
+    next('/login')
+  }
+})
+export default router
