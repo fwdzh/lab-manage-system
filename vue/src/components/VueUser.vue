@@ -114,8 +114,8 @@ import { ElMessage } from 'element-plus'
     })
     try{
       const res = await axios.post(`${prefix}/api/user/add`, {
-                      username : newUser.value.username,
-                      password : newUser.value.password,
+                      username: newUser.value.username,
+                      password: newUser.value.password,
                       email: newUser.value.email
       })
       if(res.status === 200){
@@ -128,7 +128,11 @@ import { ElMessage } from 'element-plus'
       }
     } catch(e) {
       console.log(e)
-      ElMessage.error(e.response.data.message)
+      if(e.response){
+        ElMessage.error(e.response.data.message)
+      }else{
+        ElMessage.error("添加失败！")
+      }
     }
   }
 </script>

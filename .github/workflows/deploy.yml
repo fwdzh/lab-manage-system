@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 当 main 分支有 push 时触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 系统来运行构建任务
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # 检出代码
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '25'  # 使用 Node.js 16（可以根据需要调整版本）
+
+    - name: Install dependencies
+      run: |
+        cd vue  # 进入 vue 文件夹
+        npm install  # 安装依赖
+
+    - name: Build the project
+      run: |
+        cd vue  # 进入 vue 文件夹
+        npm run build  # 执行 npm run build 来构建项目
+
+    - name: Deploy to GitHub Pages
+      run: |
+        # 配置 Git 用户
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "your-email@example.com"
+        
+        # 创建一个新的 gh-pages 分支（如果不存在）
+        git checkout --orphan gh-pages
+
+        # 删除所有现有文件
+        git rm -rf .
+
+        # 将构建的 dist 文件夹内容添加到 gh-pages 分支
+        cp -r vue/dist/* .  # 将 vue/dist 目录下的所有文件复制到当前分支
+
+        # 提交并推送到 gh-pages 分支
+        git add .
+        git commit -m "Deploy to GitHub Pages"
+        git push -f origin gh-pages  # 使用 -f 强制推送
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的 GitHub Token，用于推送代码到仓库
