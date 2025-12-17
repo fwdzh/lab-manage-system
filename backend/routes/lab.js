@@ -16,7 +16,7 @@ router.post('/add', async(req, res) => {
         const [rows] = await db.query('SELECT * FROM labs WHERE name = ?', [name])
         if(rows.length)
             return res.status(400).json({ message : "实验室名称重复！" })
-        await db.query('INSERT INTO labs (name, leader, phone, email, description, location) VALUES (?, ?, ?, ?, ?)',[
+        await db.query('INSERT INTO labs (name, leader, phone, email, description, location) VALUES (?, ?, ?, ?, ?, ?)',[
             name,
             leader ?? null,
             phone ?? null,

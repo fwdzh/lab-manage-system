@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-button type="primary" @click="addButton">
+    <h2>用户列表</h2>
+    <el-button type="primary" @click="() => dialogVisible=true" style="margin-bottom: 20px;">
       新增用户
     </el-button>
     <el-table :data="data" style="width: 100%;">
@@ -8,6 +9,11 @@
       <el-table-column label="用户名" prop="username" />
       <el-table-column label="邮箱" prop="email" />
       <el-table-column label="创建时间" prop="create_time" />
+      <el-table-column label="操作">
+        <template v-slot="scope">
+          <el-button @click="deleteUser(scope.row.id)" type="danger" size="small">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-dialog title="新增用户" v-model="dialogVisible">
@@ -87,14 +93,14 @@ import { ElMessage } from 'element-plus'
     if(res.status === 200){
       data.value = res.data.userList
       console.log(data.value)
+      data.value.forEach((item) => {
+        item.create_time = formatDate(item.create_time)
+      })
     }
   }
   onMounted(() => {
     f()
   })
-  async function addButton() {
-    dialogVisible.value = true
-  }
 
   const resetForm = (formEl) => {
     if (!formEl) return
@@ -102,16 +108,18 @@ import { ElMessage } from 'element-plus'
   }
   async function submitForm(formEl){
     if(!formEl) return
-    formEl.validate((valid) => {
+    let Invalid = false
+    await formEl.validate((valid) => {
       if(valid){
         console.log('submit!')
       }
       else{
-        // 不合法 => 直接 return
         console.log('error submit!')
-        return
+        Invalid = true
+        // 这里 return 是没用的，只会结束回调函数，不会影响外部代码
       }
     })
+    if(Invalid) return // 必须要把前面的 validate 加上 await，等待执行完成
     try{
       const res = await axios.post(`${prefix}/api/user/add`, {
                       username: newUser.value.username,
@@ -132,6 +140,35 @@ import { ElMessage } from 'element-plus'
         ElMessage.error(e.response.data.message)
       }else{
         ElMessage.error("添加失败！")
+      }
+    }
+  }
+  function formatDate(date) {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = (d.getMonth() + 1).toString().padStart(2, '0')  // 月份从 0 开始，所以要加 1
+    const day = d.getDate().toString().padStart(2, '0')
+    const hours = d.getHours().toString().padStart(2, '0')
+    const minutes = d.getMinutes().toString().padStart(2, '0')
+    const seconds = d.getSeconds().toString().padStart(2, '0')
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  }
+  async function deleteUser(id) {
+    try {
+      const result = await axios.delete(`${prefix}/api/user/delete`, {
+        data : { id }
+      })
+      if (result.status === 200){
+        ElMessage("删除成功！")
+        f()
+      } else {
+        ElMessage("删除失败" + result.data.message)
+      }
+    } catch(e) {
+      console.log(e)
+      if(e.response){
+        ElMessage.error(e.response.data.message)
       }
     }
   }

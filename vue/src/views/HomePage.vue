@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div style="height: 60px; background-color: #aaaaaa; display: flex;">
-          <h2><router-link to="/">实验室管理系统</router-link></h2>
+        <div style="height: 60px; background-color: #aaaaaa; display: flex; align-items: center;">
+          <h2 style="margin-left: 20px;"><router-link to="/">实验室管理系统</router-link></h2>
 
 
-          <el-button @click="logout()" style="margin-right: auto 0;" type="primary">
+          <el-button @click="logout()" style="margin-left: auto; margin-right: 20px;" type="primary">
             退出登录
           </el-button>
         </div>
@@ -15,7 +15,7 @@
                     <el-menu-item index="/user">
                       用户
                     </el-menu-item>
-                    <el-menu-item index="/">实验室</el-menu-item>
+                    <el-menu-item index="/lab">实验室</el-menu-item>
                     <el-menu-item index="/">设备</el-menu-item>
                 </el-menu>
             </div>

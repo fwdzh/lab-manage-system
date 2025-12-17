@@ -37,16 +37,15 @@ router.post('/add', async (req, res) => {
 
 router.delete('/delete', async (req, res) => {
     const { id } = req.body;
-    let delCount = 0;
     try {
-        // for(const userId of id) {
-        //     const [result] = await db.query('DELETE FROM users WHERE id = ?', [userId]);
-        //     if(result.affectedRows > 0) delCount++;
-        // }
-        await db.query('DELETE FROM users WHERE id IN (?)', [id])
-        res.json({
-            message: "成功删除！"
-        });
+        const [result] =  await db.query('DELETE FROM users WHERE id IN (?)', [id])
+        if(result.affectedRows){
+            res.json({
+                message: "成功删除！"
+            });
+        }else{
+            res.status(400).json({ message: "删除失败！" })
+        }
     } catch (e) {
         console.log(e);
         res.status(500).json({
