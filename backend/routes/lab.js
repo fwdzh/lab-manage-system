@@ -38,7 +38,7 @@ router.patch('/update/:id', async (req, res) => {
         if(!name && !leader && !phone && !email && !des && !location)
             return res.status(400).json({ message : "没有需要修改的内容" })
         if(name){
-            const [rows] = await db.query('SELECT * FROM labs WHERE name = ?', [name])
+            const [rows] = await db.query('SELECT * FROM labs WHERE name = ? AND id != ?', [name, labId])
             if(rows.length)
                 return res.status(400).json({ message : "实验室名称重复！" })
             await db.query("UPDATE labs SET name = ? WHERE id = ?", [name, labId])
