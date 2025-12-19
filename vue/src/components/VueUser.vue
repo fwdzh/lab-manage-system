@@ -11,6 +11,7 @@
       <el-table-column label="创建时间" prop="create_time" />
       <el-table-column label="操作">
         <template v-slot="scope">
+          <el-button @click="() => { curUser = {...scope.row}; dialog2 = true}" type="primary" size="small">编辑</el-button>
           <el-button @click="deleteUser(scope.row.id)" type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -44,6 +45,33 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog title="修改用户信息" v-model="dialog2">
+      <el-form
+        ref="userInfo"
+        status-icon
+        :model="curUser"
+        :rules="rules"
+        label-width="auto"
+        destroy-on-close
+      >
+        <el-form-item label="username" prop="username">
+          <el-input v-model="curUser.username" placeholder="请输入设备名称" disabled/>
+        </el-form-item>
+        <!-- 不需要改用户名的，肯定不能改用户名 -->
+        <el-form-item label="password" prop="password">
+          <el-input v-model="curUser.password" placeholder="请输入密码"/>
+        </el-form-item>
+        <el-form-item label="email" prop="email">
+          <el-input v-model="curUser.email" placeholder="请输入邮箱"/>
+        </el-form-item>
+
+        <el-form-item>
+          <!-- <el-button @click="() => userInfo.resetFields()">重置</el-button> -->
+          <el-button type="primary" @click="updateUser(userInfo)">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -55,12 +83,21 @@ import { ElMessage } from 'element-plus'
   const prefix = 'http://localhost:3000'
   const data = ref([])
   const dialogVisible = ref(false)
+  const dialog2 = ref(false)
+
   const newUser = ref({
     username: '',
     password: '',
     email: ''
   })
+  const curUser = ref({
+    id: '',
+    username: '',
+    password: '',
+    email: ''
+  })
   const formRef = ref()
+  const userInfo = ref()
   function validateUsername(rule, value, callback){
     if(value === ''){
       callback(new Error('请输入用户名'))
@@ -169,6 +206,41 @@ import { ElMessage } from 'element-plus'
       console.log(e)
       if(e.response){
         ElMessage.error(e.response.data.message)
+      }
+    }
+  }
+  async function updateUser(formEl) {
+    if(!formEl) return
+    let Invalid = false
+    await formEl.validate((valid) => {
+      if(valid){
+        console.log('submit!')
+      }
+      else{
+        console.log('error submit!')
+        Invalid = true
+      }
+    })
+    if(Invalid) return // 必须要把前面的 validate 加上 await，等待执行完成
+    try{
+      const res = await axios.patch(`${prefix}/api/user/update/${curUser.value.id}`, {
+                      password: curUser.value.password,
+                      email: curUser.value.email
+      })
+      if(res.status === 200){
+        resetForm(formEl)
+        dialog2.value = false
+        f()
+        ElMessage.success("修改成功")
+      }else{
+        ElMessage.error("修改失败")
+      }
+    } catch(e) {
+      console.log(e)
+      if(e.response){
+        ElMessage.error(e.response.data.message)
+      }else{
+        ElMessage.error("修改失败！")
       }
     }
   }
