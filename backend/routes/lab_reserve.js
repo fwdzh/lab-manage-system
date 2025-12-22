@@ -59,6 +59,7 @@ router.post('/add', async (req, res) => {
             return res.status(400).json({ message : "实验室不存在或不可预约！" })
         }
     } catch(e) {
+        console.log(e)
         res.status(500).json({ message : "预约失败！" })
     }
 
@@ -68,11 +69,12 @@ router.post('/add', async (req, res) => {
             return res.status(400).json({ message : "用户不存在！" })
         }
     } catch(e) {
+        console.log(e)
         res.status(500).json({ message : "预约失败！" })
     }
 
     if(!start_time || !end_time){
-        res.status(400).json({ message : "开始结束时间不能为空！" })
+        return res.status(400).json({ message : "开始结束时间不能为空！" })
     }
 
     const data = { user_id, lab_id, status, start_time, end_time, note }
