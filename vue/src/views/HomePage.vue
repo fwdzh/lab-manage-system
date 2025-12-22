@@ -12,11 +12,10 @@
         <div style="display: flex;">
             <div style="height: calc(100vh - 60px);">
                 <el-menu router>
-                    <el-menu-item index="/user">
-                      用户
-                    </el-menu-item>
+                    <el-menu-item index="/user">用户</el-menu-item>
                     <el-menu-item index="/lab">实验室</el-menu-item>
                     <el-menu-item index="/device">设备</el-menu-item>
+                    <el-menu-item index="/reservation">预约</el-menu-item>
                 </el-menu>
             </div>
             <div style="flex: 1">

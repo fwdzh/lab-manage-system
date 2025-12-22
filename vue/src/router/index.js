@@ -6,6 +6,7 @@ import Home from '@/views/HomePage.vue'
 import VueUser from '@/components/VueUser.vue'
 import VueLab from '@/components/VueLab.vue'
 import VueDevice from '@/components/VueDevice.vue'
+import LabReserve from '@/components/LabReserve.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +17,8 @@ const router = createRouter({
       children : [
         {path: 'user', component: VueUser, name : 'user'},
         {path: 'lab', component: VueLab, name: 'lab'},
-        {path: 'device', component: VueDevice, name: 'device'}
+        {path: 'device', component: VueDevice, name: 'device'},
+        {path: 'reservation', component: LabReserve, name: 'reservation'}
       ]
     },
     // { path: '/user', component: VueUser, name: 'user' },

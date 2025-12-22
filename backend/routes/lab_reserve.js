@@ -102,6 +102,55 @@ router.post('/add', async (req, res) => {
 
 })
 
+router.patch('/update/:id', async(req, res) => {
+    const reservationId = req.params.id
+    const { user_id, lab_id, status, start_time, end_time, note } = req.body
+    
+    if(!user_id || !lab_id){
+        return res.status(400).json({ message : "用户 id 和实验室 id 不能为空！" })
+    }
+
+    try {
+        const [result] = await db.query('SELECT id FROM labs WHERE id = ? and status = 1', [lab_id])
+        if(!result.length){
+            return res.status(400).json({ message : "实验室不存在或不可预约！" })
+        }
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message : "预约失败！" })
+    }
+    
+    if(!start_time || !end_time){
+        return res.status(400).json({ message : "开始结束时间不能为空！" })
+    }
+
+    const data = { user_id, lab_id, status, start_time, end_time, note }
+    const place = []
+    const values = []
+
+    for(const key in data){
+        if(data[key] !== undefined && data[key]){
+            place.push(key + " = ?")
+            values.push(data[key])
+        }
+    }
+
+    if(values.length === 0){
+        return res.status(400).json({ message : "没有需要修改的信息" })
+    }
+
+    values.push(reservationId)
+
+    console.log(place)
+    try {
+        await db.query(`UPDATE lab_reservations SET ${place} WHERE id = ?`, values)
+        res.json({ message : "修改成功！" })
+    } catch(e) {
+        console.log(e)
+        res.status(500).json({ message : "修改失败！" })
+    }
+})
+
 router.delete('/delete/:id', async (req, res) => {
     const reserveId = req.params.id
 
