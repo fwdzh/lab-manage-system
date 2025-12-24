@@ -16,6 +16,7 @@
                     <el-menu-item index="/lab">实验室</el-menu-item>
                     <el-menu-item index="/device">设备</el-menu-item>
                     <el-menu-item index="/reservation">预约</el-menu-item>
+                    <el-menu-item index="/borrow_device">借用记录</el-menu-item>
                 </el-menu>
             </div>
             <div style="flex: 1">
