@@ -127,9 +127,8 @@
   import { onMounted, ref } from 'vue';
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
-
+  import { prefix } from '@/config';
   const data = ref([])
-  const prefix = 'http://localhost:3000'
   const dialog1 = ref(false)
   const dialog2 = ref(false)
   const newReservation = ref({

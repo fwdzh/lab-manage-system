@@ -130,11 +130,11 @@
 </template>
 
 <script setup>
-const prefix = 'http://localhost:3000'
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import { formatDateTime } from '@/utils/time'
 import { ElForm, ElMessage } from 'element-plus'
+import { prefix } from '@/config'
 const dialog1 = ref(false)
 const dialog2 = ref(false)
 const data = ref([])

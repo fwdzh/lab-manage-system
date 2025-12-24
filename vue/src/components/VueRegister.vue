@@ -43,11 +43,11 @@
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
     import axios from 'axios'
+    import { prefix } from '@/config'
     const username = ref('')
     const password = ref('')
     const confirmPass = ref('')
     const email = ref('')
-    const prefix = 'http://localhost:3000'
     const router = useRouter()
 
     async function register() {

@@ -4,10 +4,10 @@
     import axios from 'axios';
     import { ElMessage } from 'element-plus';
     import { useRouter } from 'vue-router';
+    import { prefix } from '@/config';
 
     const username = ref('')
     const password = ref('')
-    const prefix = 'http://localhost:3000'
     const router = useRouter()
 
     async function login() {
