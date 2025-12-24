@@ -48,6 +48,8 @@ jobs:
         # 将构建的 dist 文件夹内容添加到 gh-pages 分支
         cp -r vue/dist/* .  # 将 vue/dist 目录下的所有文件复制到当前分支
 
+        touch .nojekyll
+
         # 提交并推送到 gh-pages 分支
         git add .
         git commit -m "Deploy to GitHub Pages"
