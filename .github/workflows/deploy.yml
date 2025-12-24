@@ -3,56 +3,78 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 当 main 分支有 push 时触发
+      - main
 
 permissions:
   contents: write
-  actions: write
-
+  pages: write
+  id-token: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 系统来运行构建任务
-
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2  # 检出代码
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
       with:
-        node-version: '25'  # 使用 Node.js 16（可以根据需要调整版本）
-
+        node-version: '18'  # 推荐使用稳定的 LTS 版本
+    
     - name: Install dependencies
       run: |
-        cd vue  # 进入 vue 文件夹
-        npm install  # 安装依赖
-
-    - name: Build the project
+        cd vue
+        npm ci  # 使用 ci 代替 install，更快更稳定
+    
+    - name: Build project
       run: |
-        cd vue  # 进入 vue 文件夹
-        npm run build  # 执行 npm run build 来构建项目
-
+        cd vue
+        npm run build
+    
+    - name: Prepare deployment
+      run: |
+        # 创建临时目录用于部署
+        mkdir -p deploy_temp
+        
+        # 复制构建结果
+        cp -r vue/dist/* deploy_temp/
+        
+        # 添加 .nojekyll 文件
+        touch deploy_temp/.nojekyll
+        
+        # 如果 Vue 路由使用 history 模式，添加 404.html
+        cp deploy_temp/index.html deploy_temp/404.html 2>/dev/null || true
+    
     - name: Deploy to GitHub Pages
       run: |
-        # 配置 Git 用户
         git config --global user.name "GitHub Actions"
         git config --global user.email "wu_yi_@outlook.com"
         
-        # 创建一个新的 gh-pages 分支（如果不存在）
-        git checkout --orphan gh-pages
-
-        # 删除所有现有文件
-        git rm -rf .
-
-        # 将构建的 dist 文件夹内容添加到 gh-pages 分支
-        cp -r vue/dist/* .  # 将 vue/dist 目录下的所有文件复制到当前分支
-
-        touch .nojekyll
-
-        # 提交并推送到 gh-pages 分支
+        # 切换到 gh-pages 分支或创建新分支
+        if git show-ref --verify --quiet refs/heads/gh-pages; then
+          git checkout gh-pages
+          # 清理旧文件，但保留 .git 目录
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
+        else
+          git checkout --orphan gh-pages
+          git rm -rf .
+        fi
+        
+        # 移动新文件到根目录
+        mv deploy_temp/* .
+        rm -rf deploy_temp
+        
+        # 提交并推送
         git add .
-        git commit -m "Deploy to GitHub Pages"
-        git push -f origin gh-pages  # 使用 -f 强制推送
+        git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')"
+        git push -f origin gh-pages
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的 GitHub Token，用于推送代码到仓库
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    # 可选：添加清理步骤
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -rf deploy_temp || true
