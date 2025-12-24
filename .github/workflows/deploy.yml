@@ -21,7 +21,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'  # 推荐使用稳定的 LTS 版本
+        node-version: '25'  # 推荐使用稳定的 LTS 版本
     
     - name: Install dependencies
       run: |
