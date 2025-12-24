@@ -21,7 +21,7 @@
         </el-table-column>
       </el-table>
 
-      <el-dialog title="新增设备" v-model="dialog1">
+      <el-dialog title="新增预约" v-model="dialog1">
         <p>
           实际肯定是得可以自己选择，输入名字筛选啥的，之后再写吧。再苦一苦用户，骂名我来担。
         </p>
