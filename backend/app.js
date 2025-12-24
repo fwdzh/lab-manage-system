@@ -7,9 +7,10 @@ const cors = require('cors');
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
-const labRouter = require('./routes/lab')
-const deviceRouter = require('./routes/device')
-const labReserveRouter = require('./routes/lab_reserve')
+const labRouter = require('./routes/lab');
+const deviceRouter = require('./routes/device');
+const labReserveRouter = require('./routes/lab_reserve');
+const borrowDeviceRouter = require('./routes/device_borrow');
 
 const app = express();
 
@@ -26,24 +27,25 @@ app.use('/api/user', userRouter);
 app.use('/api/lab', labRouter);
 app.use('/api/device', deviceRouter);
 app.use('/api/lab_reservation/', labReserveRouter);
+app.use('/api/borrow_device', borrowDeviceRouter);
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
 
-  res.json({
-    message: err.message,
-    error: req.app.get('env') === 'development' ? err : {}
-  });
+    res.json({
+        message: err.message,
+        error: req.app.get('env') === 'development' ? err : {},
+    });
 });
 
 module.exports = app;
