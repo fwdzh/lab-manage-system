@@ -62,5 +62,5 @@ jobs:
           cp -r deploy_temp/. .
 
           git add .
-          git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes"
+          git commit -m "Deployyy: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes"
           git push -f origin gh-pages
