@@ -11,68 +11,56 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '22'  # 推荐使用稳定的 LTS 版本
-    
-    - name: Install dependencies
-      run: |
-        cd vue
-        npm ci  # 使用 ci 代替 install，更快更稳定
-    
-    - name: Build project
-      run: |
-        cd vue
-        npm run build
-    
-    - name: Prepare deployment
-      run: |
-        # 创建临时目录用于部署
-        mkdir -p deploy_temp
-        
-        # 复制构建结果
-        cp -r vue/dist/* deploy_temp/
-        
-        # 添加 .nojekyll 文件
-        touch deploy_temp/.nojekyll
-        
-    
-    - name: Deploy to GitHub Pages
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "wu_yi_@outlook.com"
-        
-        # 切换到 gh-pages 分支或创建新分支
-        if git show-ref --verify --quiet refs/heads/gh-pages; then
-          git checkout gh-pages
-          # 清理旧文件，但保留 .git 目录
-          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
-        else
-          git checkout --orphan gh-pages
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          cd vue
+          npm ci
+
+      - name: Build
+        run: |
+          cd vue
+          npm run build
+
+      - name: Prepare gh-pages content
+        run: |
+          rm -rf deploy_temp
+          mkdir deploy_temp
+
+          # 把 dist 内容完整复制（包括隐藏文件）
+          cp -r vue/dist/. deploy_temp/
+
+          # 禁用 Jekyll（非常重要）
+          echo "" > deploy_temp/.nojekyll
+
+      - name: Deploy to gh-pages
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+
+          if git show-ref --verify --quiet refs/heads/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+          fi
+
+          # 清空旧内容
           git rm -rf .
-        fi
-        
-        # 移动新文件到根目录
-        mv deploy_temp/* .
-        rm -rf deploy_temp
-        
-        # 提交并推送
-        git add .
-        git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')"
-        git push -f origin gh-pages
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    # 可选：添加清理步骤
-    - name: Cleanup
-      if: always()
-      run: |
-        rm -rf deploy_temp || true
+
+          # 拷贝新内容
+          cp -r deploy_temp/. .
+
+          git add .
+          git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes"
+          git push -f origin gh-pages
