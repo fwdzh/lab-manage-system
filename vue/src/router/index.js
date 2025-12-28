@@ -11,6 +11,8 @@ import DeviceBorrow from '@/components/DeviceBorrow.vue'
 import UserHome from '@/views/UserHome.vue'
 import UserReserve from '@/components/UserReserve.vue'
 import UserDefault from '@/components/UserDefault.vue'
+import UserLab from '@/components/UserLab.vue'
+import AdminDefault from '@/components/AdminDefault.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +23,7 @@ const router = createRouter({
       path: '/admin',
       component: Home,
       children: [
+        {path: '/admin', component: AdminDefault},
         { path: '/admin/user', component: VueUser, name: 'user' },
         { path: '/admin/lab', component: VueLab, name: 'lab' },
         { path: '/admin/device', component: VueDevice, name: 'device' },
@@ -33,7 +36,8 @@ const router = createRouter({
       component: UserHome,
       children: [
         {path: '', component: UserDefault},
-        {path: 'reserve_records', component: UserReserve}
+        {path: 'reserve_records', component: UserReserve},
+        {path: 'lab', component: UserLab}
       ]
     }
   ],

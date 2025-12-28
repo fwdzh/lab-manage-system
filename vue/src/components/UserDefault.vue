@@ -1,5 +1,6 @@
 <template>
-  <h2>hello, {{ usrename }}</h2>
+  <h2>Ciallo～(∠・ω&lt; )⌒☆ 👋 {{ usrename }}</h2>
+  <img src="/cat.gif">
 </template>
 
 <script setup>
