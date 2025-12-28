@@ -68,11 +68,11 @@
         </el-form>
       </el-dialog>
 
-      <el-dialog title="修改设备信息" v-model="dialog2">
+      <el-dialog title="修改预约信息" v-model="dialog2">
         <el-form
           ref="itemInfo"
           status-icon
-          :model="curDevice"
+          :model="curItem"
           :rules="rules"
           label-width="auto"
           destroy-on-close

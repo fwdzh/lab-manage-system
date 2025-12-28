@@ -8,6 +8,9 @@ import VueLab from '@/components/VueLab.vue'
 import VueDevice from '@/components/VueDevice.vue'
 import LabReserve from '@/components/LabReserve.vue'
 import DeviceBorrow from '@/components/DeviceBorrow.vue'
+import UserHome from '@/views/UserHome.vue'
+import UserReserve from '@/components/UserReserve.vue'
+import UserDefault from '@/components/UserDefault.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,18 +18,24 @@ const router = createRouter({
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     {
-      path: '/',
+      path: '/admin',
       component: Home,
       children: [
-        { path: 'user', component: VueUser, name: 'user' },
-        { path: 'lab', component: VueLab, name: 'lab' },
-        { path: 'device', component: VueDevice, name: 'device' },
-        { path: 'reservation', component: LabReserve, name: 'reservation' },
-        { path: 'borrow_device', component: DeviceBorrow },
+        { path: '/admin/user', component: VueUser, name: 'user' },
+        { path: '/admin/lab', component: VueLab, name: 'lab' },
+        { path: '/admin/device', component: VueDevice, name: 'device' },
+        { path: '/admin/reservation', component: LabReserve, name: 'reservation' },
+        { path: '/admin/borrow_device', component: DeviceBorrow },
       ],
     },
-    // { path: '/user', component: VueUser, name: 'user' },
-    { path: '/', redirect: '/home' },
+    {
+      path: '/',
+      component: UserHome,
+      children: [
+        {path: '', component: UserDefault},
+        {path: 'reserve_records', component: UserReserve}
+      ]
+    }
   ],
 })
 

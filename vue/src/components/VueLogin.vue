@@ -27,6 +27,8 @@
                 ElMessage.success("登录成功！")
                 console.log(res.data.token)
                 localStorage.setItem('token', res.data.token)
+                localStorage.setItem('userId', res.data.user.id)
+                localStorage.setItem('username', res.data.user.username)
                 router.push('/')
             }else{
                 ElMessage.error("登录失败！")
